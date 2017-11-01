@@ -50,7 +50,13 @@ public class StudentControllerServlet extends HttpServlet {
 			listStudents(request, response);
 			break;
 		case "ADD":
-			addStudents(request, response);
+			addStudent(request, response);
+			break;
+		case "LOAD":
+			loadStudent(request, response);
+			break;
+		case "UPDATE":
+			updateStudent(request, response);
 			break;
 		default:
 			listStudents(request, response);
@@ -58,15 +64,42 @@ public class StudentControllerServlet extends HttpServlet {
 
 	}
 
-	private void addStudents(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	private void updateStudent(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		int id = Integer.parseInt(request.getParameter("studentId"));
 		String firstName = request.getParameter("firstName");
 		String lastName = request.getParameter("lastName");
 		String email = request.getParameter("email");
-		
+
+		Student student = new Student(id, firstName, lastName, email);
+
+		studentDao.updateStudent(student);
+
+		listStudents(request, response);
+	}
+
+	private void loadStudent(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		String studentId = request.getParameter("studentId");
+
+		Student student = studentDao.getStudent(studentId);
+
+		request.setAttribute("student", student);
+
+		RequestDispatcher dispatcher = request.getRequestDispatcher("/update-student-form.jsp");
+		dispatcher.forward(request, response);
+	}
+
+	private void addStudent(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		String firstName = request.getParameter("firstName");
+		String lastName = request.getParameter("lastName");
+		String email = request.getParameter("email");
+
 		Student newStudent = new Student(firstName, lastName, email);
-		
+
 		studentDao.addStudent(newStudent);
-		
+
 		listStudents(request, response);
 	}
 

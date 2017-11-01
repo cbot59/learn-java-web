@@ -60,6 +60,40 @@ public class StudentDao {
 		return students;
 	}
 
+	public Student getStudent(String studentId) {
+		Connection connection = null;
+		PreparedStatement statement = null;
+		ResultSet resultSet = null;
+		int id = Integer.parseInt(studentId);
+
+		Student student = null;
+
+		String sql = "select * from student " + "where id = ?";
+		try {
+			connection = dataSource.getConnection();
+			statement = connection.prepareStatement(sql);
+
+			statement.setInt(1, id);
+
+			resultSet = statement.executeQuery();
+
+			if (resultSet.next()) {
+				String firstName = resultSet.getString("first_name");
+				String lastName = resultSet.getString("last_name");
+				String email = resultSet.getString("email");
+				student = new Student(id, firstName, lastName, email);
+			} else {
+				throw new SQLException("Could not find student with ID: " + id);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			close(connection, statement, resultSet);
+		}
+
+		return student;
+	}
+
 	private void close(Connection connection, Statement statement, ResultSet resultSet) {
 		try {
 			if (resultSet != null)
@@ -86,6 +120,29 @@ public class StudentDao {
 			statement.setString(1, newStudent.getFirstName());
 			statement.setString(2, newStudent.getLastName());
 			statement.setString(3, newStudent.getEmail());
+
+			statement.execute();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			close(connection, statement, null);
+		}
+	}
+
+	public void updateStudent(Student student) {
+		Connection connection = null;
+		PreparedStatement statement = null;
+
+		String sql = "update student " + "set first_name = ?, last_name = ?, email = ? " + "where id = ?";
+
+		try {
+			connection = dataSource.getConnection();
+			statement = connection.prepareStatement(sql);
+
+			statement.setString(1, student.getFirstName());
+			statement.setString(2, student.getLastName());
+			statement.setString(3, student.getEmail());
+			statement.setInt(4, student.getId());
 
 			statement.execute();
 		} catch (SQLException e) {
