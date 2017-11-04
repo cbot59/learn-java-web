@@ -6,3 +6,4 @@ What's inside
 1. List all students from database
 2. Add student to database
 3. Update existing student in database
+4. Delete existing student in database
