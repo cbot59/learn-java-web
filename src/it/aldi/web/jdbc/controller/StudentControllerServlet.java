@@ -58,10 +58,22 @@ public class StudentControllerServlet extends HttpServlet {
 		case "UPDATE":
 			updateStudent(request, response);
 			break;
+		case "DELETE":
+			deleteStudent(request, response);
+			break;
 		default:
 			listStudents(request, response);
 		}
 
+	}
+
+	private void deleteStudent(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		String studentId = request.getParameter("studentId");
+
+		studentDao.deleteStudent(studentId);
+
+		listStudents(request, response);
 	}
 
 	private void updateStudent(HttpServletRequest request, HttpServletResponse response)

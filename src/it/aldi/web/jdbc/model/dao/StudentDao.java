@@ -151,4 +151,26 @@ public class StudentDao {
 			close(connection, statement, null);
 		}
 	}
+
+	public void deleteStudent(String studentId) {
+		Connection connection = null;
+		PreparedStatement statement = null;
+
+		int id = Integer.parseInt(studentId);
+
+		String sql = "delete from student " + "where id = ?";
+
+		try {
+			connection = dataSource.getConnection();
+			statement = connection.prepareStatement(sql);
+
+			statement.setInt(1, id);
+
+			statement.execute();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			close(connection, statement, null);
+		}
+	}
 }
